@@ -2,7 +2,9 @@ name: Build Frontend
 
 on:
   push:
+    branches: ["main"]
     paths: ["app/frontend/**"]
+  create:
     tags: ["release-*.*.*"]
 
 env:
