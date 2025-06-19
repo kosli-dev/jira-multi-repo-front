@@ -1,0 +1,67 @@
+name: Attest Source Controls
+
+on:
+  push:
+    branches-ignore:
+      - 'refs/tags/*' # In this demo we use tags to simulate what SW is running, so ignore
+
+
+env:
+  # kosli commands picks up org, flow, trail and api-token from these environment variables
+  KOSLI_ORG: "${{ vars.KOSLI_ORG }}"
+  KOSLI_FLOW: multi-repo-front
+  KOSLI_TRAIL: ${{ github.sha }}
+  KOSLI_API_TOKEN: "${{ secrets.KOSLI_PUBLIC_API_TOKEN }}"
+  KOSLI_CLI_VERSION: "${{ vars.KOSLI_CLI_VERSION }}"
+  KOSLI_TEMPLATE_FILE: "kosli-flow-templates/source-template.yml"
+  # KOSLI_DRY_RUN: true
+  JIRA_BASE_URL: "${{ vars.KOSLI_JIRA_BASE_URL }}"
+  JIRA_USERNAME: ${{ vars.KOSLI_JIRA_USERNAME }}
+  JIRA_API_TOKEN: ${{ secrets.KOSLI_JIRA_API_TOKEN }}
+  JIRA_PROJECT_KEY: "MRJP,mrjp"
+
+jobs:
+  begin-trail:
+    name: Begin trail
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Begin trail
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-begin-trail@main
+        with:
+          kosli-trail: ${{ env.KOSLI_TRAIL }}
+          kosli-template-file: ${{ env.KOSLI_TEMPLATE_FILE }}
+
+  jira-ticket:
+    name: Jira ticket
+    needs: [begin-trail]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Attest jira ticket
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-attest-jira@main
+        with:
+          jira-base-url: ${{ env.JIRA_BASE_URL }}
+          jira-username: ${{ env.JIRA_USERNAME }}
+          jira-api-token: ${{ env.JIRA_API_TOKEN }}
+          jira-project-key: ${{ env.JIRA_PROJECT_KEY }}
+          jira-issue-fields: "summary,description"
+          allow-only-branch-match: true
+          report-to-kosli: ${{ github.ref == 'refs/heads/main' }}
+
+  pull-request:
+    name: Pull-request
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [begin-trail]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Attest GitHub pull-request
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-attest-pullrequest@main
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          assert: true

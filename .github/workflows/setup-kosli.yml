@@ -1,0 +1,45 @@
+name: Setup kosli
+
+on:
+  workflow_dispatch:
+
+env:
+  # kosli commands picks up org, flow, trail and api-token from these environment variables
+  KOSLI_ORG: "${{ vars.KOSLI_ORG }}"
+  KOSLI_API_TOKEN: "${{ secrets.KOSLI_PUBLIC_API_TOKEN }}"
+  KOSLI_CLI_VERSION: "${{ vars.KOSLI_CLI_VERSION }}"
+
+jobs:
+  create-flows:
+    name: Create kosli flows and environments
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Kosli cli
+        uses: kosli-dev/setup-cli-action@v2
+        with:
+          version:
+            ${{ vars.KOSLI_CLI_VERSION }}
+
+      ### flows ###
+      - name: Create jira-multi-repo-front-source flow
+        run:
+          kosli create flow jira-multi-repo-front-source
+            --description "Track jira multi repo front attestations for source"
+            --template-file kosli-flow-templates/source-template.yml
+
+      - name: Create jira-multi-repo-front-app flow
+        run:
+          kosli create flow jira-multi-repo-front-app
+            --description "Track jira multi repo front attestations for application"
+            --template-file kosli-flow-templates/app-template.yml
+
+#      - name: Create jira-multi-repo-front-release flow
+#        run:
+#          kosli create flow jira-multi-repo-front-release
+#            --description "Track jira multi repo front attestations for releases"
+#            --template-file kosli-flow-templates/release-template.yml
+
