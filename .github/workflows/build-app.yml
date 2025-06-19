@@ -1,0 +1,66 @@
+name: Build Frontend
+
+on:
+  push:
+    paths: ["app/frontend/**"]
+#    branches-ignore:
+#      - 'refs/tags/*' # In this demo we use tags to simulate what SW is running, so ignore
+
+env:
+  # kosli commands picks up org, flow, trail and api-token from these environment variables
+  KOSLI_ORG: "${{ vars.KOSLI_ORG }}"
+  KOSLI_FLOW: jira-multi-repo-front-app
+  KOSLI_TRAIL: ${{ github.sha }}
+  KOSLI_API_TOKEN: "${{ secrets.KOSLI_PUBLIC_API_TOKEN }}"
+  KOSLI_CLI_VERSION: "${{ vars.KOSLI_CLI_VERSION }}"
+  KOSLI_TEMPLATE_FILE: "kosli-flow-templates/app-template.yml"
+  # KOSLI_DRY_RUN: true
+
+jobs:
+  begin-trail:
+    name: Begin trail
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Begin trail
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-begin-trail@main
+        with:
+          kosli-trail: ${{ env.KOSLI_TRAIL }}
+          kosli-template-file: ${{ env.KOSLI_TEMPLATE_FILE }}
+
+
+  build:
+    name: Build frontend
+    needs: [begin-trail]
+    runs-on: ubuntu-latest
+    outputs:
+      fingerprint: ${{ steps.calculate_fingerprint.outputs.fingerprint }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build frontend
+        run: echo "Here we could do some proper build"
+
+      - name: Extract short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
+
+      - name: Attest artifact
+        id: calculate_fingerprint
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-attest-dir-artifact@main
+        with:
+          kosli-artifact-template-name: frontend
+          artifact-name: frontend:${{ env.SHORT_SHA }}
+          artifact-dir: app/frontend
+
+  deploy-dev:
+    name: Deploy frontend development
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [build]
+    environment: Development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to development
+        run: echo "Here we could do a proper deploy to Development environment"
