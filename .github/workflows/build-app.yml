@@ -2,8 +2,10 @@ name: Build Frontend
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
     tags: ["release-*.*.*"]
+  workflow_dispatch:
 
 env:
   # kosli commands picks up org, flow, trail and api-token from these environment variables
