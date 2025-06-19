@@ -33,7 +33,7 @@ jobs:
 
   build:
     name: Build frontend
-    needs: [setup]
+    needs: [ setup ]
     runs-on: ubuntu-latest
     outputs:
       fingerprint: ${{ steps.calculate_fingerprint.outputs.fingerprint }}
@@ -46,6 +46,18 @@ jobs:
       - name: Extract short SHA
         run: echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
 
+      - name: Set artifact name
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/release-* ]]; then
+            # Extract version from tag (remove 'refs/tags/release-' prefix)
+            VERSION="${{ github.ref }}"
+            VERSION="${VERSION#refs/tags/release-}"
+            echo "ARTIFACT_NAME=frontend:${VERSION}" >> $GITHUB_ENV
+          else
+            echo "ARTIFACT_NAME=frontend:${{ env.SHORT_SHA }}" >> $GITHUB_ENV
+          fi
+          echo "Artifact name will be: $ARTIFACT_NAME"
+
       - name: Attest artifact
         id: calculate_fingerprint
         if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/release-') }}
@@ -55,7 +67,7 @@ jobs:
           KOSLI_TRAIL: ${{ needs.setup.outputs.kosli-trail }}
         with:
           kosli-artifact-template-name: frontend
-          artifact-name: frontend:${{ env.SHORT_SHA }}
+          artifact-name: ${{ env.ARTIFACT_NAME }}
           artifact-dir: app/frontend
 
   deploy-dev:
