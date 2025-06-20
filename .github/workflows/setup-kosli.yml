@@ -41,4 +41,4 @@ jobs:
         run:
           kosli create flow jira-multi-repo-front-release
             --description "Track jira multi repo front attestations for releases"
-            --template-file kosli-flow-templates/app-template.yml
+            --template-file kosli-flow-templates/release-template.yml

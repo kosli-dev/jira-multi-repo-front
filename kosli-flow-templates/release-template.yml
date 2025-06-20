@@ -1,0 +1,7 @@
+version: 1
+trail:
+    attestations:
+        - name: jira-issues
+          type: custom:jira-issues-list
+    artifacts:
+        - name: frontend
