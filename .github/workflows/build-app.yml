@@ -28,7 +28,7 @@ jobs:
         uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-begin-trail-commit-or-release@main
         with:
           kosli-release-flow: "jira-multi-repo-front-release"
-          kosli-release-template: "kosli-flow-templates/app-template.yml"
+          kosli-release-template: "kosli-flow-templates/release-template.yml"
           kosli-commit-flow: "jira-multi-repo-front-app"
           kosli-commit-template: "kosli-flow-templates/app-template.yml"
 
@@ -94,7 +94,7 @@ jobs:
 
       - name: Get previous release tag
         id: get-previous
-        uses: kosli-dev/jira-multi-repo-release/.github/actions/get-previous-release@main
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/get-previous-release-tag@main
         with:
           current-tag: ${{ github.ref_name }}
 
