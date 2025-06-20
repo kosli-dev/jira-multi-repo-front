@@ -2,4 +2,4 @@ This is just a file to test out that changes to frontend source code
 can trigger a build, reporting to Kosli and Jira
 Part of the jira-multi-report-front project
 
-counter=4
+counter=5
