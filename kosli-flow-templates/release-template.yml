@@ -5,3 +5,6 @@ trail:
           type: custom:jira-issues-list
     artifacts:
         - name: frontend
+          attestations:
+            - name: release-approval
+              type: custom:approval-jira
