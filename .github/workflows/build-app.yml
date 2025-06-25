@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    tags: ["release-*.*.*"]
+    tags: ["v*.*.*"]
   workflow_dispatch:
 
 env:
@@ -50,10 +50,10 @@ jobs:
 
       - name: Set artifact name
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/release-* ]]; then
-            # Extract version from tag (remove 'refs/tags/release-' prefix)
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            # Extract version from tag (remove 'refs/tags/v' prefix)
             VERSION="${{ github.ref }}"
-            VERSION="${VERSION#refs/tags/release-}"
+            VERSION="${VERSION#refs/tags/v}"
             echo "ARTIFACT_NAME=frontend:${VERSION}" >> $GITHUB_ENV
           else
             echo "ARTIFACT_NAME=frontend:${{ env.SHORT_SHA }}" >> $GITHUB_ENV
@@ -62,7 +62,7 @@ jobs:
 
       - name: Attest artifact
         id: calculate_fingerprint
-        if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/release-') }}
+        if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
         uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-attest-dir-artifact@main
         env:
           KOSLI_FLOW: ${{ needs.setup.outputs.kosli-flow }}
@@ -74,7 +74,7 @@ jobs:
 
   deploy-dev:
     name: Deploy frontend development
-    if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/release-') }}
+    if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v') }}
     needs: [build]
     environment: Development
     runs-on: ubuntu-latest
@@ -84,7 +84,7 @@ jobs:
 
   attest-jira-list:
     name: Attest list of Jira issues since previous release
-    if: ${{ startsWith(github.ref, 'refs/tags/release-') }}
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     needs: [setup]
     runs-on: ubuntu-latest
     steps:
