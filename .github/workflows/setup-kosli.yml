@@ -37,8 +37,8 @@ jobs:
             --description "Track jira multi repo front attestations for application"
             --template-file kosli-flow-templates/app-template.yml
 
-      - name: Create jira-multi-repo-front-release flow
+      - name: Create jira-multi-repo-front-tagged flow
         run:
-          kosli create flow jira-multi-repo-front-release
-            --description "Track jira multi repo front attestations for releases"
-            --template-file kosli-flow-templates/release-template.yml
+          kosli create flow jira-multi-repo-front-tagged
+            --description "Track jira multi repo front attestations for tagged versions"
+            --template-file kosli-flow-templates/tagged-template.yml
