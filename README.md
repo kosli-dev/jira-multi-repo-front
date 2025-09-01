@@ -28,7 +28,7 @@ flow.
 ## Tagged version of SW ready for release
 When the team is of the opinion that the SW is ready to the next release to
 production they make a tagged version of the SW. This is done by pushing a tag
-of the format `v.*.*.*`.
+of the format `v*.*.*`.
 
 Tagged SW versions are tracked in the 
 [jira-multi-repo-front-tagged](https://app.kosli.com/kosli-public/flows/jira-multi-repo-front-tagged/trails/)
