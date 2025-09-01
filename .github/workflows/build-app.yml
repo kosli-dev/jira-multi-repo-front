@@ -43,7 +43,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build frontend
-        run: echo "Here we could do some proper build"
+        run: |
+          echo "Here we could do some proper build"
+          # To make each commit generate a new version we add a file to the artifact
+          echo "${{ github.ref }}" > app/frontend/github-ref.txt
 
       - name: Extract short SHA
         run: echo "SHORT_SHA=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
