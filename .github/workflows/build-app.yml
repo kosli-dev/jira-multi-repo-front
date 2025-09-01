@@ -25,10 +25,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Begin trail
         id: begin-trail
-        uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-begin-trail-commit-or-release@main
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/kosli-begin-trail-commit-or-tagged-version@main
         with:
-          kosli-release-flow: "jira-multi-repo-front-tagged"
-          kosli-release-template: "kosli-flow-templates/tagged-template.yml"
+          kosli-tagged-version-flow: "jira-multi-repo-front-tagged"
+          kosli-tagged-version-template: "kosli-flow-templates/tagged-template.yml"
           kosli-commit-flow: "jira-multi-repo-front-app"
           kosli-commit-template: "kosli-flow-templates/app-template.yml"
 
@@ -94,7 +94,7 @@ jobs:
 
       - name: Get previous version tag
         id: get-previous
-        uses: kosli-dev/jira-multi-repo-release/.github/actions/get-previous-release-tag@main
+        uses: kosli-dev/jira-multi-repo-release/.github/actions/get-previous-version-tag@main
         with:
           current-tag: ${{ github.ref_name }}
 
