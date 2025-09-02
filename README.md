@@ -40,4 +40,5 @@ An example for version v1.0.11 can be found [here](https://app.kosli.com/kosli-p
 At this point the SW team has done their job and the release manager will now orchestrate
 the next release and approval of SW to production.
 
-Please see the README of `jira-multi-repo-release` for details.
+Please see the README of `jira-multi-repo-release` for details and also instructions for
+running a demo.
